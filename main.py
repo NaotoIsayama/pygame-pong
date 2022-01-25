@@ -61,6 +61,11 @@ class Game:
       self.center = Ball.get_center(self.Ball)
       self.velocity_ball = Ball.get_velocity(self.Ball)
       self.radius = Ball.get_radius(self.Ball)
+
+      # font attributes
+      self.font_score = pygame.font.SysFont('', 60)
+      self.font_text = pygame.font.SysFont('', 25)
+      self.font_color = pygame.Color('white')
       
       # other attributes
       self.FPS = 60
@@ -115,10 +120,20 @@ class Game:
       # Draw all game objects.
       # - self is the Game to draw     
       self.surface.fill(self.bg_color) # clear the display surface first
+
+      # Render the instructions to the screen
+      intro_text = self.font_text
+      intro_text_surface_1 = intro_text.render('Use Q and A to move the left paddle', False, self.font_color)
+      intro_text_surface_2 = intro_text.render('Use P and L to move the right paddle', False, self.font_color)
+      self.surface.blit(intro_text_surface_1,(((self.surface_width - intro_text.size('Use Q and A to move the left paddle')[0])//2),0))
+      self.surface.blit(intro_text_surface_2,(((self.surface_width - intro_text.size('Use P and L to move the right paddle')[0])//2), 25))
+      
+      # draw the ball, paddles, and the scores
       self.Ball.draw()
       pygame.draw.rect(self.surface, self.paddle_color, self.paddle_left)
       pygame.draw.rect(self.surface, self.paddle_color, self.paddle_right)
       self.scorekeeping()
+      
       pygame.display.update() # make the updated surface appear on the display
       
    def update(self):
@@ -165,8 +180,7 @@ class Game:
    def scorekeeping(self):
       
       #initialize font
-      font = pygame.font.SysFont('', 60)
-      font_color = pygame.Color('white')
+      font = self.font_score
       
       #render fonts
       score_display_right = font.render(str(self.score_right),True,self.font_color,self.bg_color)
