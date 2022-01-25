@@ -1,7 +1,6 @@
-# Pong v3
+
 # Naoto Isayama
-# Lab section H04
-# Pong v3 is a program that bounces a ball and keeps track of a players score, and allows for user controls of the paddles
+# Pong is a program that bounces a ball and keeps track of a players score, and allows for user controls of the paddles
 
 import pygame
 
