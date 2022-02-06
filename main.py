@@ -19,7 +19,7 @@ def main():
    # create a game object and call play
    game = Game(w_surface)
    game.play() 
-   
+
    # quit
    pygame.quit() 
 
@@ -50,7 +50,7 @@ class Game:
       self.paddle_velocity = 7
       
       # game specific objects
-      self.Ball = Ball('white', 5, [250, 200], [4, 2], self.surface)
+      self.Ball = Ball('white', 5, [250, 200], [-6, 4], self.surface)
       self.paddle_left = pygame.Rect(25, 150, 10, 100)
       self.paddle_right = pygame.Rect(465, 150, 10, 100)
       self.score_left = 0
@@ -65,29 +65,58 @@ class Game:
       # font attributes
       self.font_score = pygame.font.SysFont('', 60)
       self.font_text = pygame.font.SysFont('', 25)
+      self.font_start = pygame.font.SysFont('', 45)
       self.font_color = pygame.Color('white')
       
       # other attributes
       self.FPS = 60
       self.game_Clock = pygame.time.Clock()
-      self.close_clicked = False
+      self.close_clicked = True
+      self.is_starting = True
       self.continue_game = True
       
    def play(self):
 
+      # startup loop
+      while self.is_starting:
+         # Startup text
+         self.draw_start_text()
+         events = pygame.event.get()
+         for event in events:
+            if event.type == pygame.KEYDOWN:
+               if event.key == pygame.K_SPACE:
+                  self.close_clicked = False
+                  self.is_starting = False
+            if event.type == pygame.QUIT:
+               pygame.quit()
+               
+      # game loop
       while not self.close_clicked:  # until player clicks close box
          # play frame
          self.handle_events()
-         self.draw()            
+         self.draw()             
          if self.continue_game:
             self.update()
             self.decide_continue()
          self.game_Clock.tick(self.FPS) # run at most with FPS Frames Per Second 
 
+   def draw_start_text(self):
+      # draw the text upon start up
+
+      self.surface.fill(self.bg_color)
+
+      # Startup text
+      start_text = self.font_start
+      start_text_surface = start_text.render('Press SPACEBAR to begin', False, self.font_color)
+      size = start_text.size('Press SPACEBAR to begin')
+      self.surface.blit(start_text_surface,(((self.surface_width - size[0])//2),((self.surface_height//2) - size[1])))
+
+      pygame.display.update()
+
+
    def handle_events(self):
       # Handle each user event by changing the game state appropriately.
       # - self is the Game whose events will be handled
-
       events = pygame.event.get()
       for event in events:
          if event.type == pygame.QUIT:
