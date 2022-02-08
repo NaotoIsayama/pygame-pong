@@ -45,8 +45,6 @@ class Game:
       # Paddle attributes
       self.left_paddle_up = False
       self.left_paddle_down = False
-      self.right_paddle_up = False
-      self.right_paddle_down = False
       self.paddle_velocity = 7
       
       # game specific objects
@@ -128,10 +126,6 @@ class Game:
                self.left_paddle_down = True
             if event.key == pygame.K_q:
                self.left_paddle_up = True
-            if event.key == pygame.K_l:
-               self.right_paddle_down = True
-            if event.key == pygame.K_p:
-               self.right_paddle_up = True
          
          # If any of the movement keys are released, the corresponding attribute is set to False
          if event.type == pygame.KEYUP:
@@ -139,10 +133,7 @@ class Game:
                self.left_paddle_down = False
             if event.key == pygame.K_q:
                self.left_paddle_up = False
-            if event.key == pygame.K_l:
-               self.right_paddle_down = False
-            if event.key == pygame.K_p:
-               self.right_paddle_up = False          
+           
             
 
    def draw(self):
@@ -171,6 +162,8 @@ class Game:
       
       self.Ball.move()
       self.Ball.bounce()
+
+      computer_prediction = self.center.copy()
       
       # Paddle bounce mechanics
       if self.paddle_right.collidepoint(self.center[0], self.center[1] ) and self.velocity_ball[0] > 0:
@@ -195,16 +188,23 @@ class Game:
             self.paddle_left.top -= self.paddle_velocity
       if self.left_paddle_up == False and self.left_paddle_down == False:
          pass         
-      
-        # right paddle         
-      if self.paddle_right.bottom < self.surface_height:   
-         if self.right_paddle_down == True:
+
+
+      if self.velocity_ball[0] > 0:
+         
+         while computer_prediction[0] < self.surface_width:
+            computer_prediction[0] += self.Ball.velocity[0]
+            computer_prediction[1] += self.Ball.velocity[1]
+
+         if computer_prediction[1] < self.paddle_right.center[1] and self.paddle_right.top > self.surface_origin[0]:
+            self.paddle_right.top -= self.paddle_velocity
+         
+         elif computer_prediction[1] > self.paddle_right.center[1] and self.paddle_right.bottom < self.surface_height:
             self.paddle_right.top += self.paddle_velocity
-      if self.paddle_right.top > self.surface_origin[0]:
-         if self.right_paddle_up == True:
-            self.paddle_right.top -= self.paddle_velocity  
-      if self.right_paddle_up == False and self.right_paddle_down == False:
-            pass 
+         
+         print(computer_prediction)
+
+
          
    def scorekeeping(self):
       
