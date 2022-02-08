@@ -3,6 +3,7 @@
 # Pong is a program that bounces a ball and keeps track of a players score, and allows for user controls of the paddles
 
 import pygame
+import random
 
 def main():
    
@@ -45,10 +46,10 @@ class Game:
       # Paddle attributes
       self.left_paddle_up = False
       self.left_paddle_down = False
-      self.paddle_velocity = 7
+      self.paddle_velocity = 5
       
       # game specific objects
-      self.Ball = Ball('white', 5, [250, 200], [-6, 4], self.surface)
+      self.Ball = Ball('white', 5, [250, 200], [8, 4], self.surface)
       self.paddle_left = pygame.Rect(25, 150, 10, 100)
       self.paddle_right = pygame.Rect(465, 150, 10, 100)
       self.score_left = 0
@@ -163,7 +164,18 @@ class Game:
       self.Ball.move()
       self.Ball.bounce()
 
+      # used for the computer to predict where the ball will end up
       computer_prediction = self.center.copy()
+
+      # used to define a section of the right paddle to be moved to intercept the ball. Fixes the bug where the paddle "shakes"
+      # index 0 is the bottom of the range, index 1 is the top of the range
+      computer_paddle_range = [self.paddle_right.center[1] - self.paddle_velocity, self.paddle_right.center[1] + self.paddle_velocity]
+
+      # random number used to delay computer reaction
+      computer_delay = random.randint(275, 325)
+
+      # random number used to add error in the computer opponents final guess
+      computer_error = random.randint(-5,5)
       
       # Paddle bounce mechanics
       if self.paddle_right.collidepoint(self.center[0], self.center[1] ) and self.velocity_ball[0] > 0:
@@ -189,20 +201,28 @@ class Game:
       if self.left_paddle_up == False and self.left_paddle_down == False:
          pass         
 
+      # computer opponent logic
 
-      if self.velocity_ball[0] > 0:
+      if self.velocity_ball[0] < 0 and self.center[0] < (self.surface_width - computer_delay):
+         
+         if self.velocity_ball[1] < 0 and self.paddle_right.top > self.surface_origin[0]:
+            self.paddle_right.top -= self.paddle_velocity
+
+         if self.velocity_ball[1] > 0 and self.paddle_right.bottom < self.surface_height:
+            self.paddle_right.top += self.paddle_velocity
+
+      if self.velocity_ball[0] > 0 and self.center[0] > computer_delay:
          
          while computer_prediction[0] < self.surface_width:
             computer_prediction[0] += self.Ball.velocity[0]
             computer_prediction[1] += self.Ball.velocity[1]
 
-         if computer_prediction[1] < self.paddle_right.center[1] and self.paddle_right.top > self.surface_origin[0]:
+         if computer_prediction[1] < computer_paddle_range[1] and computer_prediction[1] < computer_paddle_range[0] and self.paddle_right.top > self.surface_origin[0]:
             self.paddle_right.top -= self.paddle_velocity
          
-         elif computer_prediction[1] > self.paddle_right.center[1] and self.paddle_right.bottom < self.surface_height:
+         elif computer_prediction[1] > computer_paddle_range[0] and computer_prediction[1] > computer_paddle_range[1] and self.paddle_right.bottom < self.surface_height:
             self.paddle_right.top += self.paddle_velocity
          
-         print(computer_prediction)
 
 
          
