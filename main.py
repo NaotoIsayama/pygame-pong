@@ -145,9 +145,7 @@ class Game:
       # Render the instructions to the screen
       intro_text = self.font_text
       intro_text_surface_1 = intro_text.render('Use Q and A to move the left paddle', False, self.font_color)
-      intro_text_surface_2 = intro_text.render('Use P and L to move the right paddle', False, self.font_color)
-      self.surface.blit(intro_text_surface_1,(((self.surface_width - intro_text.size('Use Q and A to move the left paddle')[0])//2),0))
-      self.surface.blit(intro_text_surface_2,(((self.surface_width - intro_text.size('Use P and L to move the right paddle')[0])//2), 25))
+      self.surface.blit(intro_text_surface_1,(((self.surface_width - intro_text.size('Use Q and A to move the left paddle')[0])//2),25))
       
       # draw the ball, paddles, and the scores
       self.Ball.draw()
